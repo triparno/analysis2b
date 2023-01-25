@@ -4,12 +4,12 @@ import numpy as np
 def ctFet(eta):
     '''Gives cosine of scattering angle given pseudorapidity .
 
-    Parameters:
+    Parameters
     -----------
     eta : float
         Pseudorapidity.
 
-    Returns:
+    Returns
     --------
     float
         Cosine of scattering angle
@@ -19,11 +19,13 @@ def ctFet(eta):
 
 def thFet(eta):
     '''Gives the scattering angle given pseudorapidity .
-    Parameters:
+
+    Parameters
     -----------
     eta : float
         Pseudorapidity.
-    Returns:
+
+    Returns
     --------
     flooat
         The scattering angle
@@ -33,11 +35,13 @@ def thFet(eta):
 
 def etFct(ct):
     '''Gives the pseudorapidity given the cosine of the scattering angle .
-    Parameters:
-    -----------
+
+    Parameters
+    ----------
     ctheta : float
         Cosine of scatterting angle
-    Returns:
+
+    Returns
     --------
     float
         pseudorapidity
@@ -47,10 +51,12 @@ def etFct(ct):
 
 def lamK(x, y, z):
     '''Returns the Kallen function
+
     Parameters
     ----------
     x, y, z : floats
         The variables entering the Kallen function
+
     Returns
     --------
     float
