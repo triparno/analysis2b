@@ -10,6 +10,7 @@ Welcome to Two-Body's documentation!
    :maxdepth: 2
    :caption: Contents:
 
+   README
    modules 
 
 

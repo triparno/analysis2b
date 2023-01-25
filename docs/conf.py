@@ -34,5 +34,6 @@ html_static_path = ['_static']
 extensions = [
     'sphinx.ext.autodoc',
     'sphinx.ext.viewcode',
+    'sphinx_search.extension',
     'sphinx.ext.napoleon'
 ]
