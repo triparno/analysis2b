@@ -12,8 +12,6 @@ lum = 1E4
 
 Nevents = 3
 
-Eph_st = 100
-Delz_st = 100
 
 cl_st = 0.1
 
@@ -22,7 +20,10 @@ cnt_file = ("../Data/cont/"
             + model + "_" + ch + f"_{lum}_{Nevents}")
 
 
-mrange = np.logspace(-2, 1, 100)
-grange = np.logspace(-8, -1, 100)
+mrange = np.logspace(-2, 0, 500)
+grange = np.logspace(-8, -1, 10)
 
-scan_step = 10
+gscan_step = 20
+mscan_step = 10
+Eph_st = 10
+Delz_st = 100

@@ -1,22 +1,19 @@
 import numpy as np
-import amp as amp
 import parm as pr
 import events as evn
+import decay as dec
 import inputs
 
-model = inputs.model
-IF = amp.Gam_get(model)
 ch = inputs.ch
-lum = inputs.lum
-Nevents = inputs.Nevents
 
-IF = amp.Gam_get(model)
+IF = dec.Gam_get(inputs.model, datW=inputs.wd_dir)
 
-dathi = np.genfromtxt("data/"+model+"_"+ch+f"_{lum}_{Nevents}_hi_sp.dat").T
-datlo = np.genfromtxt("data/"+model+"_"+ch+f"_{lum}_{Nevents}_lo_sp.dat").T
+data_fp = np.genfromtxt(inputs.cnt_file+"_sp.dat").T
+
+frame = inputs.frame
 
 
-def inputs(ch, mv):
+def br_func(ch, mv):
     if ch == 'el':
         BR = IF[1](mv)/IF[0](mv)
     if ch == 'mu':
@@ -38,23 +35,34 @@ if ch == 'lp':
     global_ef = pr.eff_mu
 
 l10 = np.log(10.)
+gstep = np.log10(inputs.grange[1])-np.log10(inputs.grange[0])
 
+mLislo, mLishi, gLislo, gLishi = [], [], [], []
 
-with open("data/"+model+"_"+ch+f"_{lum}_{Nevents}_hi_tp.dat", "w") as out:
-    for ii in range(len(dathi[0])):
-        gval = np.log(dathi[1][ii])
-        mm = dathi[0][ii]
-        br = inputs(ch, mm)
-        for gg in np.logspace(gval/l10+0.25, gval/l10, 50):
-            if evn.select(mm, gg, BR=br, eff_g=global_ef, lumi=lum, Nev=Nevents) == 1:
-                out.write(f"\n{mm} {gg}")
-                break
-with open("data/"+model+"_"+ch+f"_{lum}_{Nevents}_lo_tp.dat", "w") as out:
-    for ii in range(len(datlo[0])):
-        gval = np.log(datlo[1][ii])
-        mm = datlo[0][ii]
-        br = inputs(ch, mm)
-        for gg in np.logspace(gval/l10-0.25, gval/l10, 50):
-            if evn.select(mm, gg, BR=br, eff_g=global_ef, lumi=lum, Nev=Nevents) == 1:
-                out.write(f"\n{mm} {gg}")
-                break
+for ii in range(len(data_fp[0])):
+    gval = np.log10(data_fp[2][ii])
+    mm = data_fp[0][ii]
+    br = br_func(ch, mm)
+    gvalmin, gvalmax = gval, gval + gstep
+    for gg in np.logspace(gvalmax, gvalmin, inputs.scan_step):
+        if evn.select(mm, inputs.coup_scal*gg, IF[0](mm), pr.eta_narrow, frame, BR=br, eff_g=global_ef, lumi=inputs.lum,
+                      Nev=inputs.Nevents) == 1:
+            mLishi.append(mm)
+            gLishi.append(gg)
+            break
+
+for ii in range(len(data_fp[0])):
+    gval = np.log10(data_fp[1][ii])
+    mm = data_fp[0][ii]
+    br = br_func(ch, mm)
+    gvalmin, gvalmax = gval - gstep, gval
+    for gg in np.logspace(gvalmin, gvalmax, inputs.scan_step):
+        if evn.select(mm, inputs.coup_scal*gg, IF[0](mm), pr.eta_narrow, frame, BR=br, eff_g=global_ef, lumi=inputs.lum,
+                      Nev=inputs.Nevents) == 1:
+            mLislo.append(mm)
+            gLislo.append(gg)
+            break
+
+with open(inputs.cnt_file+"_tp.dat", "w") as out:
+    for ii in range(len(mLislo)):
+        out.write(f"\n{mLislo[ii]} {gLislo[ii]} {gLishi[ii]}")

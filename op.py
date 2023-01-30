@@ -8,7 +8,7 @@ ch = inputs.ch
 
 IF = dec.Gam_get(inputs.model, datW=inputs.wd_dir)
 
-data_fp = np.genfromtxt(inputs.cnt_file+"_fp.dat").T
+data_fp = np.genfromtxt(inputs.cnt_file+"_tp.dat").T
 
 frame = inputs.frame
 
@@ -63,6 +63,6 @@ for ii in range(len(data_fp[0])):
             gLislo.append(gg)
             break
 
-with open(inputs.cnt_file+"_sp.dat", "w") as out:
-    for ii in range(len(mLislo)):
+with open(inputs.cnt_file+"_op.dat", "w") as out:
+    for ii in range(min(len(mLislo), len(mLishi))):
         out.write(f"\n{mLislo[ii]} {gLislo[ii]} {gLishi[ii]}")

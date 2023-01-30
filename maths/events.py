@@ -15,6 +15,9 @@ rmax = pr.rmax
 zmin = pr.zmin
 zmax = pr.zmax
 
+arrE = np.linspace(pr.Eph_lo, pr.Eph_hi, inputs.Eph_st)
+Norm = np.trapz(1/arrE, arrE)
+
 
 def modp(mv, Eph):
     '''Return the magnitude of the three momentum for an exotic vector mass
@@ -106,8 +109,8 @@ def eff_ang(mv, gg, totgam, eta, Eph):
     norm = np.sum(ldist)
     rr = lran*np.sin(th)
     zz = lran*np.cos(th)
-    zz = np.random.uniform(zz - pr.Delz_lo, zz + pr.Delz_hi)
-    eff = np.sum(efi_nom(rr, zz) * ldist)/norm/(pr.Delz_hi-pr.Delz_lo)
+    # zz = np.random.uniform(zz - pr.Delz_lo, zz + pr.Delz_hi)
+    eff = np.sum(efi_nom(rr, zz) * ldist)/norm  # /(pr.Delz_hi-pr.Delz_lo)
     return eff
 
 
@@ -143,6 +146,9 @@ def eta_int(mv, gg, totgam, eta, Ep, frame):
     return np.trapz(Dsig, eta)
 
 
+eta_int_vec = np.vectorize(eta_int)     # Vectorize the above function
+
+
 def select(mv, gg, totgam, eta, frame, BR=1, eff_g=1, lumi=1, Nev=3):
     '''For a particular mass and coupling pair check if number of
     accepted events is greater than required sensitivity. The photon
@@ -174,10 +180,13 @@ def select(mv, gg, totgam, eta, frame, BR=1, eff_g=1, lumi=1, Nev=3):
     int
         binary, 1 or zero
     '''
-    arrE = np.linspace(pr.Eph_lo, pr.Eph_hi, inputs.Eph_st)
-    pdfE = reciprocal.pdf(arrE, pr.Eph_lo, pr.Eph_hi)
-    pdfE /= np.sum(pdfE)
-    Eph = np.random.choice(arrE, p=pdfE)
-    tot = eta_int(mv, gg, totgam, Eph, frame)
-    tot *= lumi * BR * eff_g
-    return np.heaviside(tot-Nev, 0)
+    # pdfE = reciprocal.pdf(arrE, pr.Eph_lo, pr.Eph_hi)
+    # pdfE /= np.sum(pdfE)
+    tot = []
+    for ee in arrE:
+        tot.append(eta_int(mv, gg, totgam, eta, ee, frame)/ee)
+    tot = np.asarray(tot)
+    totint = np.trapz(tot, arrE)
+    totint *= BR * eff_g * lumi
+    totint /= Norm
+    return np.heaviside(totint-Nev, 0)

@@ -40,7 +40,7 @@ for mm in inputs.mrange:
     br = br_func(ch, mm)
     for gg in np.flipud(inputs.grange):
         cp = inputs.coup_scal*gg
-        csec = evn.select(mm, cp, IF[0](mm), frame, BR=br, eff_g=global_ef,
+        csec = evn.select(mm, cp, IF[0](mm), pr.eta_narrow, frame, BR=br, eff_g=global_ef,
                           lumi=inputs.lum, Nev=inputs.Nevents)
         if csec == 1:
             mLishi.append(mm)
@@ -51,7 +51,7 @@ for mm in inputs.mrange:
     br = br_func(ch, mm)
     for gg in inputs.grange:
         cp = inputs.coup_scal*gg
-        csec = evn.select(mm, cp, IF[0](mm), frame, BR=br, eff_g=global_ef,
+        csec = evn.select(mm, cp, IF[0](mm), pr.eta_narrow, frame, BR=br, eff_g=global_ef,
                           lumi=inputs.lum, Nev=inputs.Nevents)
         if csec == 1:
             mLislo.append(mm)
